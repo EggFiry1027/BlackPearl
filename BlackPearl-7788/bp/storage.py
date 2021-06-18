@@ -7,7 +7,7 @@ import urllib.request as web
 bcs_mods_path = '/home/ubuntu/Bombsquad-Ballistica-Modded-Server/dist/ba_root/mods/'
 myembed = discord.Embed
 step = str(os.sep)
-mydir = str('.' + step + 'bp' + step)
+mydir = str(os.getcwd() + step + 'bp' + step)
 bdata = f'{mydir}bdata{step}'
 bs_servers_path = f'{mydir}bs_servers{step}'
 temp_folder = f'{mydir}temp{step}'
