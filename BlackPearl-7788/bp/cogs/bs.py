@@ -3,7 +3,7 @@ import discord, random, os, json, shutil
 from discord import DMChannel
 from discord.ext import commands
 from datetime import datetime
-from bp.cloud import SFTP
+from bp.mycloud import SFTP
 from bp.livestats import LiveStats
 
 def get_stats_file_from_local(s: str):
@@ -91,7 +91,7 @@ class BombSquad(commands.Cog):
 			return
 		servers = get_json('bs_servers')
 		if p not in servers:
-			ctx.reply(f"The `party_code` **`{p}`** not Found!")
+			await ctx.reply(f"The `party_code` **`{p}`** not Found!")
 			return
 		pn = LiveStats().get_ls(p)['party_name']
 		stats = get_stats_file_from_local(p)

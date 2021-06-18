@@ -1,5 +1,5 @@
 from bp.storage import *
-from bp.cloud import SFTP
+from bp.mycloud import SFTP
 import os, json, pytz, random
 from datetime import datetime
 from bp.blackPearl import bot

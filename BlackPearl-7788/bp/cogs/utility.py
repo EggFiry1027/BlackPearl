@@ -1,6 +1,6 @@
 from bp.storage import *
 import discord, random, os, json, pytz
-from bp import cloud
+from bp import mycloud
 from discord.ext import commands
 from itertools import cycle
 from datetime import datetime
@@ -23,7 +23,7 @@ class Utility(object):
 	@commands.command()
 	async def whois(self, ctx, aid: str = None):
 		if aid == None:
-			ctx.reply("Send pb-ID/account_id as an arg :/")
+			await ctx.reply("Send pb-ID/account_id as an arg :/")
 			return
 		url = 'http://bombsquadgame.com/accountquery?id=' + aid
 		data = get_response(url)

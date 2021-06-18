@@ -1,6 +1,6 @@
 from bp.storage import *
 import discord, random, os, json, pytz
-from bp import cloud
+from bp import mycloud
 from discord.ext import commands, tasks
 from itertools import cycle
 from datetime import datetime
@@ -22,9 +22,9 @@ async def on_ready():
 	for file in os.listdir(mydir + 'cogs'):
 		if file.endswith('.py'):
 			bot.load_extension(f"bp.cogs.{file[:-3]}")
-	await bot.change_presence(activity=discord.Game(f"b.help || Under Testing..."))
+	# await bot.change_presence(activity=discord.Game(f"b.help || Under Testing..."))
 	from bp import msg
-	print(f"Bot is now Online!, Name = {bot.user.name}, ID = {bot.user.id} || {datetime.now()}")
+	print(f"Bot is now Online!, Name = {bot.user.name}#{bot.user.discriminator}, ID = {bot.user.id} || {datetime.now()}")
 
 #GUILD JOIN || Prefix Setup
 @bot.event
@@ -35,7 +35,11 @@ async def on_guild_join(guild):
 
 @bot.event
 async def on_reaction_add(reaction, user):
-	if not isinstance(reaction.emoji, str): print(f"{reaction.emoji.name} - {reaction.emoji.id}")
+	if not isinstance(reaction.emoji, str):
+		t = f"<:{reaction.emoji.name}:{reaction.emoji.id}>\n"
+		with open("emojis.txt", 'a') as f:
+			f.write(t)
+			f.close()
 
 #MESSAGE
 @bot.event
@@ -78,4 +82,4 @@ async def update_live_stats():
 @tasks.loop(seconds=300)
 async def update_server_stats():
 	#Update stats.json of all servers
-	cloud.SFTP().update_stats()
+	mycloud.SFTP().update_stats()

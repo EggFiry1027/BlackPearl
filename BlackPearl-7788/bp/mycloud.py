@@ -72,7 +72,7 @@ class SFTP(object):
 			get_file(s, 'stats')
 
 	def update_players(self):
-		print('cloud: players.json disabled')
+		print('mycloud: players.json disabled')
 		return
 		for s in self.servers:
 			get_file(s, 'players')
