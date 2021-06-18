@@ -5,7 +5,7 @@ from discord.ext import commands
 from itertools import cycle
 from datetime import datetime
 
-class Utility(object):
+class Utility(commands.Cog):
 	"""docstring for Utility"""
 	def __init__(self, bot):
 		self.bot = bot

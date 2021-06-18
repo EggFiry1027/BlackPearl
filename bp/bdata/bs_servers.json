@@ -3,7 +3,7 @@
         "dc_owners": ["OMEGA"],
         "chnl": 854239657561423883,
         "ip": "13.232.158.250",
-        "key": "E:\\NK2\\bot\\BlackPearl#7788\\bp\\bs_servers\\omega_teams\\Omega16New.pem",
+        "key": "/app/bp//bs_servers/omega_teams/Omega16New.pem",
         "build": "renamed",
         "mods": "/home/ubuntu/oteams/dist/ba_root/mods/",
         "ls": "/home/ubuntu/oteams/dist/ba_root/mods/stats/ls.json",
