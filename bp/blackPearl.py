@@ -70,7 +70,7 @@ async def on_command_error(ctx, error):
 		pass
 	if isinstance(error, commands.BotMissingPermissions):
 		await ctx.reply(f"Error:\n**```{error}```**")
-	else: print(error)
+	pass
 
 #BackGroundTasks
 @tasks.loop(seconds=5)
