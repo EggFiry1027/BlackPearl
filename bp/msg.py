@@ -1,6 +1,5 @@
 from bp.storage import *
 import discord, os, json
-from bp import mycloud, livestats
 from discord import DMChannel as dm
 
 class Msg(object):
@@ -70,8 +69,9 @@ class Msg(object):
 				title=sn,
 				description="Setting up the server and adding live stats plugin..."
 				)
-			lives_stats.server_embeds[sn] = await chnl.send(embed=ouremd)
-			await livestats.LiveStats().add_server(self.msg_cp[uid]['server_name'], self.msg_cp[uid]['server_details'])
+			from bp.livestats import LiveStats, server_embeds
+			server_embeds[sn] = await chnl.send(embed=ouremd)
+			await LiveStats().add_server(self.msg_cp[uid]['server_name'], self.msg_cp[uid]['server_details'])
 			self.msg_cpc.pop(uid)
 			self.msg_cp.pop(uid)
 			self.msg_p.pop(uid)
