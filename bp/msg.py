@@ -34,7 +34,7 @@ class Msg(object):
 	async def handle_msg(self, m: discord.Message, bot):
 		self.bot = bot
 		u = m.author
-		if (not u.bot) and (u.id in msg_p) and (msg_p[u.id].startswith('pa')):
+		if (not u.bot) and (u.id in self.msg_p) and (self.msg_p[u.id].startswith('pa')):
 			await self.handle_party_add(u, m)
 		return False
 
@@ -101,9 +101,9 @@ class Msg(object):
 					return
 				else:
 					if self.msg_cpc[uid]['sending_mods_path'] == True:
-						self.msg_cp[uid]['server_details']['mods'] = msg
-						self.msg_cp[uid]['server_details']['ls'] = msg + '/stats/ls.json'
-						self.msg_cp[uid]['server_details']['stats'] = msg + '/stats/stats.json'
+						self.msg_cp[uid]['server_details']['mods'] = m.content
+						self.msg_cp[uid]['server_details']['ls'] = m.content + '/stats/ls.json'
+						self.msg_cp[uid]['server_details']['stats'] = m.content + '/stats/stats.json'
 						self.msg_p[uid] = self.msg_cpc[uid]['next_process']
 						await ask(u, self.msg_cpc[uid]['next_qn'])
 			if msg.startswith('yes') and self.msg_cpc[uid]['confirm_asked'] == True:
