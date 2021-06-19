@@ -1,7 +1,7 @@
+from bp.storage import *
 import discord, os, json
 from bp import mycloud, livestats
 from discord import DMChannel as dm
-from bp.storage import *
 
 msg_p = {}
 msg_cp = {}
@@ -37,6 +37,7 @@ class Msg(object):
 		global msg_p
 		global msg_cp
 		global msg_cpc
+		global confirm_asked
 		self.bot = bot
 		u = m.author
 		if (not u.bot) and (u.id in msg_p) and (msg_p[u.id].startswith('pa')):
@@ -110,13 +111,13 @@ class Msg(object):
 						msg_cp[uid]['server_details']['stats'] = msg + '/stats/stats.json'
 						msg_p[uid] = msg_cpc[uid]['next_process']
 						await ask(u, msg_cpc[uid]['next_qn'])
-			if msg.startswith('yes') and confirm_asked:
+			if msg.startswith('yes') and confirm_asked == True:
 				if msg_cpc[uid]['k'] != 'build':
 					msg_p[uid] = msg_cpc[uid]['next_process']
 					msg_cp[uid]['server_details'][msg_cpc[uid]['k']] = msg_cpc[uid]['v']
 				await ask(u, msg_cpc[uid]['next_qn'])
 				confirm_asked = False
-			if msg.startswith('no') and confirm_asked:
+			if msg.startswith('no') and confirm_asked == True:
 				if msg_cpc[uid]['k'] == 'build':
 					await ask(u, "Considering the reply as a negative one, as the bot only supports BCS Script - **Cancelling Process**")
 					await cancel()
