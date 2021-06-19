@@ -1,6 +1,6 @@
 from bp.storage import *
 import discord, random, os, json, pytz
-from bp import mycloud
+from bp import mycloud, msg
 from discord.ext import commands, tasks
 from itertools import cycle
 from datetime import datetime
