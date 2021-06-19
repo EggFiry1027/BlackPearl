@@ -1,5 +1,4 @@
 discord.py==1.7.2
-firebase-admin==5.0.0
 pip==21.1.1
 pyarmor==6.6.1
 pysftp==0.2.9

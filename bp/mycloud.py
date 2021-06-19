@@ -70,10 +70,10 @@ class SFTP(object):
 	def update_stats(self):
 		self.servers = get_json('bs_servers')
 		for s in self.servers:
-			get_file(s, 'stats')
+			self.get_file(s, 'stats')
 
 	def update_players(self):
 		self.servers = get_json('bs_servers')
 		for s in self.servers:
-			get_file(s, 'players')
+			self.get_file(s, 'players')
 SFTP()
