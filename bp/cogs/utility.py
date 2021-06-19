@@ -25,32 +25,39 @@ class Utility(commands.Cog):
 		if aid == None:
 			await ctx.reply("Send pb-ID/account_id as an arg :/")
 			return
-		url = 'http://bombsquadgame.com/accountquery?id=' + aid
-		data = get_response(url)
-		print(type(data))
-		if isinstance(data, dict):
-			out = f"```json\n{str(data)}```"
-		else:
-			out = f"```{str(data)}```"
-		await ctx.reply(content=out)
+		try:
+			url = 'http://bombsquadgame.com/accountquery?id=' + aid
+			data = get_response(url).decode()
+			if isinstance(data, dict):
+				out = f"```json\n{str(data)}```"
+			else:
+				out = f"```{str(data)}```"
+			await ctx.reply(content=out)
+		except Exception as e:
+			await ctx.reply(f"Error:\n```{str(e)}```")
 
 	@commands.command()
-	async def say(self, ctx, t: str = None):
-		if t != None:
-			await ctx.send(t)
+	async def say(self, ctx, *, t: str = None):
+		if t != None: await ctx.send(t)
 		else: await ctx.reply('What to say?')
 
 	@commands.command(aliases=['de', 'dumpemojis'])
 	async def dump_emojis(self, ctx):
-		ejs = ctx.guild.emojis
-		if len(ejs) >= 1:
-			a = {i.name: i.id for i in ejs}
-			fn = temp_folder + str(get_clean_guild_name(ctx.guild.name) + '_emojis.json')
-			dump_json(fn, a, temp=True)
-			await ctx.send(file=discord.File(fn))
-			os.remove(fn)
-		else:
-			await ctx.reply("No Emojies in This Server, sed :O")
+		if not hasattr(ctx, 'guild'):
+			await ctx.reply("This is not a Channel From Server!")
+			return
+		try:
+			ejs = ctx.guild.emojis
+			if len(ejs) >= 1:
+				a = {i.name: i.id for i in ejs}
+				fn = temp_folder + f'emojis_{ctx.guild.id}.json'
+				dump_json(fn, a, temp=True)
+				await ctx.send(file=discord.File(fn))
+				os.remove(fn)
+			else:
+				await ctx.reply("No Emojies in This Server, sed :O")
+		except Exception as e:
+			await ctx.reply(f"Error:\n```{str(e)}```")
 
 def setup(bot):
 	bot.add_cog(Utility(bot))

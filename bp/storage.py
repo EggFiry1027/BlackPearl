@@ -16,6 +16,15 @@ msg_p = {}
 msg_cp = {}
 msg_cpc = {}
 confirm_asked = False
+dc_names = {
+'score': ['scores', 'Score'],
+'avg_score': ['avg_score', 'Average Score'],
+'games': ['games', "Games Played"],
+'kills': ['kills', 'Total Kills'],
+'deaths': ['deaths', 'Total Deaths'],
+'kd': ['kd', 'Kill/Death Ratio'],
+'damage': ['total_damage', 'Damage Dealt']
+}
 colors = {
 	"red": clr.red(),
 	"blue": clr.blue(),
@@ -52,7 +61,7 @@ async def get_dc_user_name(bot, user_id):
 	return u.name + '#' + u.discriminator
 
 def get_rc():
-	return random.randint(0, 10)
+	return random.randint(0, 30)
 
 def get_embed_color():
 	c = discord.Color.from_rgb(get_rc(), get_rc(), get_rc())

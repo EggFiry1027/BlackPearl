@@ -37,7 +37,7 @@ class SFTP(object):
 	def get_file(self, server: str, file: str):
 		if not self.has_key(server):
 			print(f"We don't have required access files/data for '{server}' to get '{file}' from there!")
-			return
+			return "No Key"
 		try:
 			self.servers = get_json('bs_servers')
 			s = self.servers[server]
@@ -59,8 +59,9 @@ class SFTP(object):
 				sftp.get(server_file, local_file)
 				sftp.close()
 				c.close()
-			else: print(f'\'{file}\' not found in {server}')
-		except Exception as e: print(e)
+				return "success"
+			return f'\'{file}\' not found in {server}'
+		except Exception as e: return e
 
 	def upload_file(self, server: str, file: str):
 		print('sftp upload disabled!')
@@ -72,8 +73,7 @@ class SFTP(object):
 			get_file(s, 'stats')
 
 	def update_players(self):
-		print('mycloud: players.json disabled')
-		return
+		self.servers = get_json('bs_servers')
 		for s in self.servers:
 			get_file(s, 'players')
 SFTP()

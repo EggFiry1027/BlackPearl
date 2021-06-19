@@ -18,7 +18,7 @@ class BombSquadParty(commands.Cog):
 	async def party_cmd(self, ctx):
 		t = f"***Available Commands***\n\
 		*Note: \n\t (1) The `party_code` is a short identification name, provide a single \
-		word like `my_server1`. So that the server can be removed from bot again using that...\
+		word like `my_server1`. This is used by stats, top and remove cmds...\
 		\n\t (2) The `channel` should be a `channel.mention`, i.e, ping the channel where you want the live stats to be shown\
 		\n\t (3) **[Optional]**: The `owner` can be a `user.mention` (i.e, ping the owner) or a string name (eg: `BombSpot Community`)\
 		\n\t (4) All Text mustn't contain emojis or special characters*\
@@ -31,10 +31,14 @@ class BombSquadParty(commands.Cog):
 	@commands.bot_has_guild_permissions(manage_channels=True)
 	async def add(self, ctx, party_code: str = None, channel: discord.TextChannel = None, owner=None):
 		if (check_server_perms(ctx.author.id)) and ((hasattr(ctx, 'channel')) and (ctx.channel is not None)):
-			if channel == None:
+			if (channel == None) or (not hasattr(channel, 'id')):
 				await ctx.reply(f'Invalid args, check the cmd by `{ctx.prefix}party`')
 				return
 			uid = ctx.author.id
+			servers = get_json('bs_servers')
+			if party_code in servers:
+				await ctx.reply("A Party already exists with this **`party_code`**!")
+				return
 			if owner != None:
 				if isinstance(owner, discord.Member): dc_owner = get_clean_user_id(owner.id)
 				elif isinstance(owner, str): dc_owner = owner
@@ -49,7 +53,7 @@ class BombSquadParty(commands.Cog):
 			except Exception as e:
 				if type(e) == discord.Forbidden:
 					await ctx.reply('Your DM is closed, try this cmd after opening it :O')
-				else: print(e)
+				else: await ctx.reply(f"Error:\n```{str(e)}```")
 		else:
 			await ctx.reply("Sorry, you don't have perms to use this cmd in here!")
 			return
@@ -87,7 +91,7 @@ class BombSquadParty(commands.Cog):
 				delete_server(servers)
 				return
 			except Exception as e:
-				ctx.reply(f"Error:```{str(e)}```")
+				await ctx.reply(f"Error:\n```{str(e)}```")
 				return
 		else:
 			await ctx.reply("Sorry, you don't have perms to use this cmd in here!")

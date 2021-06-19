@@ -32,6 +32,7 @@ def get_clean_bs_name(name):
 	'': ' <:bs_hat:854729360821321748>',
 	'': ' <:bs_viking:854729759237341194>',
 	'': ' <:bs_yinyang:854727433635102751>',
+	'': '🇮🇳',
 	'\\n': '',
 	'\n': '',
 	'`': '',
@@ -109,12 +110,7 @@ class LiveStats(object):
 
 			#Update ls.json (live_stats) Files
 			s = servers[svr]
-			SFTP().get_file(svr, 'ls')
-
-			#Get the Data
-			ls = {}
-			try: ls = self.get_ls(svr)
-			except: continue
+			action = SFTP().get_file(svr, 'ls')
 
 			#title
 			all_owners = s['dc_owners']
@@ -126,49 +122,61 @@ class LiveStats(object):
 				if isinstance(onr, int):
 					owner_name = await get_dc_user_name(bot, onr)
 					break
-			if 'web' in s: pn = f"[{ls['party_name']}]({s['web']})"
-			else: pn = ls['party_name']
-			livep = ls['livep']
-			maxp = ls['maxp']
-			title = f'*`{pn}`*'
 
-			#description
-			description = f'\n\t\n**Players in Party:** (**`{str(livep)}`/`{str(maxp)}`**)\n**Party Code: `{svr}`**\n'
-			#players
-			plist = f'\n***Live Stats***\n'
-			ros = ls['roster']
-			for i in ros:
-				if i['account_id'] != None:
-					lnk = 'http://bombsquadgame.com/accountquery?id=' + i['account_id']
-					PD = f"[Info]({lnk})"
-				else:
-					PD = f"`No Info`"
-				ds = get_clean_bs_name(i['display_string'])
-				if i['players'] == [] or not i['players']:
-					plist += f'{ds} - <:bs_gather:854728292606804028>`In Lobby` - {PD}\n'
-				else:
-					for p in i['players']:
-						pds = get_clean_bs_name(p['name_full'])
-						plist += f'{ds} - {pds} - {PD}\n'
-			#chats
-			chats = '***LiveChats***\n```'
-			chat_index = 1
-			for c in ls['chats']:
-				if chat_index <= 13:
-					if '`' in c: c.replace('`', '')
-					chats += f'{c}\n'
-					chat_index += 1
-			#Time
-			tz = pytz.timezone('Asia/Kolkata')
-			timenow = datetime.now(tz)
-			ct = timenow.strftime('%I:%M:%S%p-%d/%b/%Y')
-			description += f"{plist}\n{chats}```-----------------------------------\n{ct} :P"
+			if action == 'success':
+				#Get the Data
+				ls = {}
+				try: ls = self.get_ls(svr)
+				except: continue
 
-			#EMBED
-			emd = myembed(title=title, description=description, color=get_embed_color())
-			bs_icon = 'https://play-lh.googleusercontent.com/CachTgIoVy7oEtLlgeo8bPcJfaUHRopRYUOH-DYyeiRsQQaqg8gjpp1qGgOs3wiC2IQ'
-			emd.set_author(name=owner_name, icon_url=bs_icon)
+				if 'web' in s: pn = f"[{ls['party_name']}]({s['web']})"
+				else: pn = ls['party_name']
+				livep = ls['livep']
+				maxp = ls['maxp']
+				title = f'*`{pn}`*'
 
+				#description
+				description = f'\n\t\n**Players in Party:** (**`{str(livep)}`/`{str(maxp)}`**)\n**Party Code: `{svr}`**\n'
+				#players
+				plist = f'\n***Live Stats***\n'
+				ros = ls['roster']
+				for i in ros:
+					if i['account_id'] != None:
+						lnk = 'http://bombsquadgame.com/accountquery?id=' + i['account_id']
+						PD = f"[Info]({lnk})"
+					else:
+						PD = f"`No Info`"
+					ds = get_clean_bs_name(i['display_string'])
+					if i['players'] == [] or not i['players']:
+						plist += f'{ds} - <:bs_gather:854728292606804028>`In Lobby` - {PD}\n'
+					else:
+						for p in i['players']:
+							pds = get_clean_bs_name(p['name_full'])
+							plist += f'{ds} - {pds} - {PD}\n'
+				#chats
+				chats = '***LiveChats***\n```\n'
+				chat_index = 1
+				for c in ls['chats']:
+					l_c = list(c)
+					new_c = ''
+					if chat_index <= 13:
+						if '`' in c: l_c.remove('`')
+						if '*' in c: l_c.remove('*')
+						chats += f'{new_c.join(l_c)}\n'
+						chat_index += 1
+				#Time
+				tz = pytz.timezone('Asia/Kolkata')
+				timenow = datetime.now(tz)
+				ct = timenow.strftime('%I:%M:%S%p-%d/%b/%Y')
+				description += f"{plist}\n{chats}\n```-----------------------------------\n{ct} :P"
+
+				#EMBED
+				emd = myembed(title=title, description=description, color=get_embed_color())
+			else:
+				emd = myembed(title="Error", description=f"\n**```{action}```**\n***Server May Be Offline***")
+			if emd != None:
+				bs_icon = 'https://play-lh.googleusercontent.com/CachTgIoVy7oEtLlgeo8bPcJfaUHRopRYUOH-DYyeiRsQQaqg8gjpp1qGgOs3wiC2IQ'
+				emd.set_author(name=owner_name, icon_url=bs_icon)
 			#Update Discord Chat
 			if len(str(emd.description)) < 1999:
 				try:

@@ -19,6 +19,7 @@ bot = commands.Bot(command_prefix = get_prefix)
 @bot.event
 async def on_ready():
 	update_live_stats.start()
+	update_server_files.start()
 	for file in os.listdir(mydir + 'cogs'):
 		if file.endswith('.py'):
 			bot.load_extension(f"bp.cogs.{file[:-3]}")
@@ -29,6 +30,7 @@ async def on_ready():
 #GUILD JOIN || Prefix Setup
 @bot.event
 async def on_guild_join(guild):
+	if guild == None or not hasattr(guild, 'id'): return
 	data = get_json('guild_data')
 	data[str(guild.id)]["prefix"] = prefix
 	dump_json('guild_data', data)
@@ -66,6 +68,8 @@ async def on_command_error(ctx, error):
 			)
 		await ctx.reply(ee)
 		pass
+	if isinstance(error, commands.BotMissingPermissions):
+		await ctx.reply(f"Error:\n**```{error}```**")
 	else: print(error)
 
 #BackGroundTasks
@@ -80,6 +84,7 @@ async def update_live_stats():
 	await LiveStats().update_live()
 
 @tasks.loop(seconds=300)
-async def update_server_stats():
-	#Update stats.json of all servers
+async def update_server_files():
+	#Update stats.json and players.json of all servers
 	mycloud.SFTP().update_stats()
+	mycloud.SFTP().update_players()
