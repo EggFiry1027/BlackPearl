@@ -1,13 +1,1 @@
-{
-    "omega_teams": {
-        "dc_owners": ["OMEGA"],
-        "chnl": 854239657561423883,
-        "ip": "13.232.158.250",
-        "key": "/app/bp//bs_servers/omega_teams/Omega16New.pem",
-        "build": "renamed",
-        "mods": "/home/ubuntu/oteams/dist/ba_root/mods/",
-        "ls": "/home/ubuntu/oteams/dist/ba_root/mods/stats/ls.json",
-        "stats": "/home/ubuntu/oteams/dist/ba_root/mods/stats/stats.json",
-        "players": "/home/ubuntu/oteams/dist/ba_root/mods/playersData/players.json"
-    }
-}
+{}

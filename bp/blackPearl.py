@@ -30,10 +30,11 @@ async def on_ready():
 #GUILD JOIN || Prefix Setup
 @bot.event
 async def on_guild_join(guild):
-	if guild == None or not hasattr(guild, 'id'): return
-	data = get_json('guild_data')
-	data[str(guild.id)]["prefix"] = prefix
-	dump_json('guild_data', data)
+	if (guild != None) and hasattr(guild, 'id') and (guild.id != None):
+		data = get_json('guild_data')
+		data[str(guild.id)]["prefix"] = prefix
+		dump_json('guild_data', data)
+	else: pass
 
 @bot.event
 async def on_reaction_add(reaction, user):

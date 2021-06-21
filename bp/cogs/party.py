@@ -30,9 +30,9 @@ class BombSquadParty(commands.Cog):
 	@party_cmd.command(aliases=['create', 'new'])
 	@commands.bot_has_guild_permissions(manage_channels=True)
 	async def add(self, ctx, party_code: str = None, channel: discord.TextChannel = None, owner=None):
-		if (check_server_perms(ctx.author.id)) and ((hasattr(ctx, 'channel')) and (ctx.channel is not None)):
+		if (check_server_perms(ctx.author.id)) and ((hasattr(ctx, 'guild')) and (ctx.guild is not None)):
 			if (channel == None) or (not hasattr(channel, 'id')):
-				await ctx.reply(f'Invalid args, check the cmd by `{ctx.prefix}party`')
+				await ctx.reply(f'Invalid Channel, check the cmd by `{ctx.prefix}party`')
 				return
 			uid = ctx.author.id
 			servers = get_json('bs_servers')
@@ -53,7 +53,7 @@ class BombSquadParty(commands.Cog):
 			except Exception as e:
 				if type(e) == discord.Forbidden:
 					await ctx.reply('Your DM is closed, try this cmd after opening it :O')
-				else: await ctx.reply(f"Error:\n```{str(e)}```")
+				else: await ctx.reply(f"***Error:\n```{str(e)}```***")
 		else:
 			await ctx.reply("Sorry, you don't have perms to use this cmd in here!")
 			return
@@ -70,31 +70,29 @@ class BombSquadParty(commands.Cog):
 			return
 
 		u = ctx.author.id
-		if (check_server_perms(u)) and ((hasattr(ctx, 'channel')) and (ctx.channel)):
-			if party_code == None:
-				await ctx.reply("Which party you want to remove nub, Don't waste my time :V")
-				return
-			servers = get_json('bs_servers')
-			if party_code not in servers:
-				await ctx.reply("No Live Stats Party exists in this name in Bot's Data :O, check correct code...")
-				return
-			owners = servers[party_code]['dc_owners']
-			if (u not in owners) or (not check_owner_perms(u)):
-				peeps = ""
-				for p in owners:
-					if isinstance(p, int):
-						peeps += await get_dc_user_name(self.bot, p) + '\n'
-				await ctx.reply(f"You have to be one of these guys:\n```{str(peeps)}```or else **Kill all of them to Take Control of the Server** :V")
-				return
+		if party_code == None:
+			await ctx.reply("Which party you want to remove nub, Don't waste my time :V")
+			return
+		servers = get_json('bs_servers')
+		if party_code not in servers:
+			await ctx.reply("No Live Stats Party exists in this name in Bot's Data :O, check correct code...")
+			return
+		owners = servers[party_code]['dc_owners']
+		if (check_owner_perms(u) == True) or (u in owners):
 			try:
 				servers.pop(party_code)
-				delete_server(servers)
+				await delete_server(servers)
 				return
 			except Exception as e:
-				await ctx.reply(f"Error:\n```{str(e)}```")
+				await ctx.reply(f"***Error:\n```{str(e)}```***")
 				return
 		else:
-			await ctx.reply("Sorry, you don't have perms to use this cmd in here!")
+			peeps = ""
+			for p in owners:
+				if isinstance(p, int):
+					peeps += await get_dc_user_name(self.bot, p) + '\n'
+				else: peeps += p + '\n'
+			await ctx.reply(f"You have to be one of these guys:\n***```\n{str(peeps)}```***\nor else **Kill all of them to Take Control of the Server** :V")
 			return
 
 def setup(bot):

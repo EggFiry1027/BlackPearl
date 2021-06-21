@@ -5,8 +5,6 @@ from datetime import datetime
 from bp.blackPearl import bot
 import urllib.request as web
 
-server_embeds = {}
-#
 def get_clean_bs_name(name):
 	n = name
 	newname = list(n)
@@ -88,10 +86,14 @@ class LiveStats(object):
 			#Put Plugin
 			plugin = bdata + 'lives_stats_plugin.json'
 			c = SFTP().connect(sd['ip'], 'ubuntu', sd['key'])
-			sftp = c.open_sftp()
-			sftp.put(plugin, sd['mods'])
-			sftp.close()
-			c.close()
+			if not isinstance(c, list):
+				sftp = c.open_sftp()
+				sftp.put(plugin, sd['mods'])
+				sftp.close()
+				c.close()
+			else:
+				emd = myembed(title=sn, description=f"```Error:\n{str(c[0])}```")
+				await server_embeds[sn].edit(embed = myembed)
 		except Exception as e:
 			emd = myembed(title=sn, description=f"```Error:\n{e}```")
 			await server_embeds[sn].edit(embed = myembed)
@@ -122,6 +124,10 @@ class LiveStats(object):
 				if isinstance(onr, int):
 					owner_name = await get_dc_user_name(bot, onr)
 					break
+			#Time
+			tz = pytz.timezone('Asia/Kolkata')
+			timenow = datetime.now(tz)
+			ct = timenow.strftime('%I:%M:%S%p-%d/%b/%Y')
 
 			if action == 'success':
 				#Get the Data
@@ -164,42 +170,31 @@ class LiveStats(object):
 						if '*' in c: l_c.remove('*')
 						chats += f'{new_c.join(l_c)}\n'
 						chat_index += 1
-				#Time
-				tz = pytz.timezone('Asia/Kolkata')
-				timenow = datetime.now(tz)
-				ct = timenow.strftime('%I:%M:%S%p-%d/%b/%Y')
 				description += f"{plist}\n{chats}\n```-----------------------------------\n{ct} :P"
 
 				#EMBED
 				emd = myembed(title=title, description=description, color=get_embed_color())
 			else:
-				emd = myembed(title="Error", description=f"\n**```{action}```**\n***Server May Be Offline***")
+				emd = myembed(title="Error", description=f"\n**```{str(action)}```**\n**Party Code: `{svr}`**\n***Possible Reasons:***\n\t**~ Server maybe Offline\n\t~ Wrong Authorization key\n\t~ Wrong Server info.**\n-----------------------------------\n{ct} :P")
 			if emd != None:
 				bs_icon = 'https://play-lh.googleusercontent.com/CachTgIoVy7oEtLlgeo8bPcJfaUHRopRYUOH-DYyeiRsQQaqg8gjpp1qGgOs3wiC2IQ'
 				emd.set_author(name=owner_name, icon_url=bs_icon)
 			#Update Discord Chat
+			async def send_new_emd():
+				try: chnl = bot.get_channel(s['chnl'])
+				except Exception as e:
+					print(e)
+					return
+				if chnl is not None:
+					try:
+						m = await chnl.send(embed=emd)
+						server_embeds[svr] = m
+					except: pass
 			if len(str(emd.description)) < 1999:
 				try:
 					if svr in server_embeds:
 						try: await server_embeds[svr].edit(embed=emd)
-						except: pass
+						except: await send_new_emd()
 					else:
-						try: chnl = bot.get_channel(s['chnl'])
-						except Exception as err:
-							print(err)
-							return
-						if chnl is not None:
-							try:
-								m = await chnl.send(embed=emd)
-								server_embeds[svr] = m
-							except: pass
-				except:
-					try: chnl = bot.get_channel(s['chnl'])
-					except Exception as err:
-						print(err)
-						return
-					if chnl is not None:
-						try:
-							m = await chnl.send(embed=emd)
-							server_embeds[svr] = m
-						except: pass
+						await send_new_emd()
+				except: await send_new_emd()

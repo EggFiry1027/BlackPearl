@@ -7,11 +7,13 @@ class SFTP(object):
 		self.servers = get_json('bs_servers')
 
 	def connect(self, ip: str, un: str, pem: str):
-		k = paramiko.RSAKey.from_private_key_file(pem)
-		c = paramiko.SSHClient()
-		c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-		c.connect(hostname=ip, username=un, pkey=k)
-		return c
+		try:
+			k = paramiko.RSAKey.from_private_key_file(pem)
+			c = paramiko.SSHClient()
+			c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+			c.connect(hostname=ip, username=un, pkey=k)
+			return c
+		except Exception as e: return [e]
 
 	def get_dir_list(self, path: str):
 		dirlist = []
@@ -36,7 +38,7 @@ class SFTP(object):
 
 	def get_file(self, server: str, file: str):
 		if not self.has_key(server):
-			print(f"We don't have required access files/data for '{server}' to get '{file}' from there!")
+			#print(f"We don't have required access files/data for '{server}' to get '{file}' from there!")
 			return "No Key"
 		try:
 			self.servers = get_json('bs_servers')
@@ -55,11 +57,13 @@ class SFTP(object):
 			if file in s:
 				server_file = s[file]
 				c = self.connect(s['ip'], 'ubuntu', s['key'])
-				sftp = c.open_sftp()
-				sftp.get(server_file, local_file)
-				sftp.close()
-				c.close()
-				return "success"
+				if not isinstance(c, list):
+					sftp = c.open_sftp()
+					sftp.get(server_file, local_file)
+					sftp.close()
+					c.close()
+					return "success"
+				else: return c[0]
 			return f'\'{file}\' not found in {server}'
 		except Exception as e: return e
 

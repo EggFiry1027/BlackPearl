@@ -15,27 +15,27 @@ clr = discord.Color
 msg_p = {}
 msg_cp = {}
 msg_cpc = {}
-confirm_asked = False
 dc_names = {
-'score': ['scores', 'Score'],
-'avg_score': ['avg_score', 'Average Score'],
-'games': ['games', "Games Played"],
-'kills': ['kills', 'Total Kills'],
-'deaths': ['deaths', 'Total Deaths'],
-'kd': ['kd', 'Kill/Death Ratio'],
-'damage': ['total_damage', 'Damage Dealt']
-}
+	'score': ['scores', 'Score'],
+	'avg_score': ['avg_score', 'Average Score'],
+	'games': ['games', "Games Played"],
+	'kills': ['kills', 'Total Kills'],
+	'deaths': ['deaths', 'Total Deaths'],
+	'kd': ['kd', 'Kill/Death Ratio'],
+	'damage': ['total_damage', 'Damage Dealt']
+	}
 colors = {
 	"red": clr.red(),
 	"blue": clr.blue(),
 	"green": clr.green()
-}
+	}
 
 files = {
 	'bot': f'{bdata}data.json',
 	'guilds': f'{bdata}guilds.json',
 	'bs_servers': f'{bdata}bs_servers.json'
-}
+	}
+server_embeds = {}
 ip_qn = "Now you are in process of adding a livestats server, Now send the ***`Internet Protocot Adress`/`IP Adress`*** of your web/cloud server in which a BombSquad 1.6 Server Build is running...\n**`Example:`** 192.168.43.1...\n***You can Cancel the process anytime before the submission by sending `cancel`***\nIf you **don't use AWS**, `cancel` the process :("
 
 def get_clean_user_id(u: str):
@@ -92,21 +92,20 @@ def dump_json(f: str, d: dict, temp=False):
 			ff.close()
 	except Exception as e: print(e)
 
-def check_server_perms(u):
+def check_server_perms(u: int):
 	users = get_json('bot')
-	if (u in users['owners']) or (u in users['server_owners']):
-		return True
+	if (int(u) in users['owners']) or (int(u) in users['server_owners']): return True
 	return False
 
-def check_top_cmd_perms(u):
+def check_top_cmd_perms(u: int):
 	users = get_json('bot')
-	if (u in users['owners']) or (u in users['admins']) or (u in users['server_owners']): return True
+	if (int(u) in users['owners']) or (int(u) in users['admins']) or (int(u) in users['server_owners']): return True
 	return False
 
-def check_owner_perms(u):
-	users = get_json('bot')
-	if (u not in users['owners']): return False
-	return True
+def check_owner_perms(u: int):
+	users = get_json('bot')['owners']
+	if int(u) in users: return True
+	return False
 
 def get_response(url):
 	req = web.Request(url)
