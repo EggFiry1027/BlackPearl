@@ -85,22 +85,25 @@ class LiveStats(object):
 			dump_json('bs_servers', servers)
 			#Put Plugin
 			plugins = [bdata + 'live_stats_plugin.py', bdata + 'players_logger.py']
-			cmds = ['tmux attach', 'mgr.chatmessage("Discord LiveStats System Added, Restarting Server to take effect...")', 'mgr.restart()']
 			c = SFTP().connect(sd['ip'], 'ubuntu', sd['key'])
 			if not isinstance(c, list):
 				sftp = c.open_sftp()
-				for plgn in plugins:
-					sftp.put(plgn, sd['mods'])
+				emd = myembed(title=sn, description="***Adding `live stats plugin`***...")
+				await server_embeds[sn].edit(embed=emd)
+				sftp.put(plugins[0], sd['mods'])
+				emd2 = myembed(title=sn, description="***Adding `players logger plugin`***...")
+				await server_embeds[sn].edit(embed=emd2)
+				sftp.put(plugins[1], sd['mods'])
 				sftp.close()
-				for cmd in cmds:
-					c.exec_command(cmd)
+				stdin, stdout, stderr = c.exec_command(f"tmux send-keys \"mgr.chatmessage('Discord LiveStats System Added, Restarting Server to take effect...')\" ENTER")
+				stdin, stdout, stderr = c.exec_command(f"tmux send-keys \"mgr.restart()\" ENTER")
 				c.close()
 			else:
 				emd = myembed(title=sn, description=f"```Error:\n{str(c[0])}```")
-				await server_embeds[sn].edit(embed = myembed)
+				await server_embeds[sn].edit(embed=emd)
 		except Exception as e:
 			emd = myembed(title=sn, description=f"```Error:\n{e}```")
-			await server_embeds[sn].edit(embed = myembed)
+			await server_embeds[sn].edit(embed=emd)
 
 	def get_ls(self, s: str):
 		p = bs_servers_path + s + step + 'data' + step + 'ls.json'
