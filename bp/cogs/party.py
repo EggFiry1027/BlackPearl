@@ -13,6 +13,25 @@ class BombSquadParty(commands.Cog):
 	async def on_ready(self):
 		print("BombSquadParty Cog Running.")
 
+	@commands.command(aliases=['showparties', 'listparties'])
+	async def parties(self, ctx):
+		svrs = get_json('bs_servers')
+		if svrs == {} or not svrs:
+			await ctx.reply("No Servers/Parties are Connected with me!")
+			return
+		msg = {}
+		for s in svrs:
+			code = svrs[s]['party_code']
+			owners = svrs[s]['dc_owners']
+			peeps = []
+			for o in owners:
+				if isinstance(o, int):
+					peeps += await get_dc_user_name(self.bot, o)
+				else: peeps += o
+			msg[code] = peeps
+		emd = myembed(title='List of Parties Connected with me:', description=f"```{str(msg)}```")
+		await ctx.reply(embed=emd)
+
 	@commands.group(name='party', invoke_without_command=True)
 	@commands.bot_has_guild_permissions(manage_channels=True)
 	async def party_cmd(self, ctx):
@@ -39,14 +58,17 @@ class BombSquadParty(commands.Cog):
 			if party_code in servers:
 				await ctx.reply("A Party already exists with this **`party_code`**!")
 				return
+			if len(servers) >= 5:
+				await ctx.reply("Max Party Limit Reached, sed!")
+				return
 			if owner != None:
-				if isinstance(owner, discord.Member): dc_owner = get_clean_user_id(owner.id)
-				elif isinstance(owner, str): dc_owner = owner
-				else: dc_owner = uid
-			else: dc_owner = uid
+				if isinstance(owner, discord.Member): dc_owner = [get_clean_user_id(owner.id), uid]
+				elif isinstance(owner, str): dc_owner = [owner, uid]
+				else: dc_owner = [uid]
+			else: dc_owner = [uid]
 			try:
 				from bp.msg import Msg
-				status = {'server_name': party_code, 'server_details': { 'dc_owner': dc_owner, 'chnl': channel.id}}
+				status = {'server_name': party_code, 'server_details': {'dc_owners': dc_owner, 'dc_admins': [], 'chnl': channel.id}}
 				Msg().set_process(uid, 'pa_ip', status, self.bot)
 				await DMChannel.send(ctx.author, ip_qn)
 				await ctx.reply('Check your DM!')

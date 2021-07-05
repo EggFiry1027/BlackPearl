@@ -38,7 +38,9 @@ class Utility(commands.Cog):
 
 	@commands.command()
 	async def say(self, ctx, *, t: str = None):
-		if t != None: await ctx.send(t)
+		if t != None:
+			await ctx.message.delete()
+			await ctx.send(t)
 		else: await ctx.reply('What to say?')
 
 	@commands.command(aliases=['de', 'dumpemojis'])

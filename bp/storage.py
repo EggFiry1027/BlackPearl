@@ -61,7 +61,7 @@ async def get_dc_user_name(bot, user_id):
 	return u.name + '#' + u.discriminator
 
 def get_rc():
-	return random.randint(0, 30)
+	return random.randint(0, 200)
 
 def get_embed_color():
 	c = discord.Color.from_rgb(get_rc(), get_rc(), get_rc())

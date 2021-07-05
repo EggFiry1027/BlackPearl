@@ -59,7 +59,7 @@ class Msg(object):
 			await ask(u, "Party adding Process has been Successfully Cancelled!")
 
 		async def add_server():
-			chnl = await self.bot.get_channel(msg_cp[uid]['server_details']['chnl'])
+			chnl = self.bot.get_channel(msg_cp[uid]['server_details']['chnl'])
 			ouremd = myembed(
 				title=sn,
 				description="Setting up the server and adding live stats plugin..."
@@ -78,7 +78,7 @@ class Msg(object):
 			return
 
 		#Check Confirmation
-		if uid in msg_cpc:
+		if uid in msg_cpc and m.attachments == []:
 			if (msg_cpc[uid]['k'] == 'build'):
 				if msg.startswith('bcs'):
 					msg_cp[uid]['server_details']['mods'] = bcs_mods_path
@@ -96,9 +96,10 @@ class Msg(object):
 					return
 				else:
 					if msg_cpc[uid]['sending_mods_path'] == True:
-						msg_cp[uid]['server_details']['mods'] = m.content
-						msg_cp[uid]['server_details']['ls'] = m.content + '/stats/ls.json'
-						msg_cp[uid]['server_details']['stats'] = m.content + '/stats/stats.json'
+						mdp = m.content if m.content.endswith('/') else str(m.content + '/')
+						msg_cp[uid]['server_details']['mods'] = mdp
+						msg_cp[uid]['server_details']['ls'] = mdp + 'stats/ls.json'
+						msg_cp[uid]['server_details']['stats'] = mdp + 'stats/stats.json'
 						msg_p[uid] = msg_cpc[uid]['next_process']
 						msg_cpc[uid]['sending_mods_path'] = False
 						await ask(u, msg_cpc[uid]['next_qn'])

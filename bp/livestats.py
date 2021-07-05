@@ -84,12 +84,16 @@ class LiveStats(object):
 			servers[sn] = sd
 			dump_json('bs_servers', servers)
 			#Put Plugin
-			plugin = bdata + 'lives_stats_plugin.json'
+			plugins = [bdata + 'live_stats_plugin.py', bdata + 'players_logger.py']
+			cmds = ['tmux attach', 'mgr.chatmessage("Discord LiveStats System Added, Restarting Server to take effect...")', 'mgr.restart()']
 			c = SFTP().connect(sd['ip'], 'ubuntu', sd['key'])
 			if not isinstance(c, list):
 				sftp = c.open_sftp()
-				sftp.put(plugin, sd['mods'])
+				for plgn in plugins:
+					sftp.put(plgn, sd['mods'])
 				sftp.close()
+				for cmd in cmds:
+					c.exec_command(cmd)
 				c.close()
 			else:
 				emd = myembed(title=sn, description=f"```Error:\n{str(c[0])}```")
@@ -149,9 +153,9 @@ class LiveStats(object):
 				for i in ros:
 					if i['account_id'] != None:
 						lnk = 'http://bombsquadgame.com/accountquery?id=' + i['account_id']
-						PD = f"[Info]({lnk})"
+						PD = f"[Info]({lnk}) - `{i['client_id']}`"
 					else:
-						PD = f"`No Info`"
+						PD = f"`No Info` - `{i['client_id']}`"
 					ds = get_clean_bs_name(i['display_string'])
 					if i['players'] == [] or not i['players']:
 						plist += f'{ds} - <:bs_gather:854728292606804028>`In Lobby` - {PD}\n'
