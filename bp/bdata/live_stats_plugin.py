@@ -26,7 +26,7 @@ class StartUpdating(object):
 		'chats': chats
 		}
 		folder = f'{modspath}/stats/'
-		if not os.path.exists(folder): os.mkdir(folder)
+		if not os.path.exists(folder): os.mkdirs(folder)
 		file = folder + 'ls.json'
 		f = open(file, 'w')
 		f.write(json.dumps(ls, indent=2))

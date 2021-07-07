@@ -180,7 +180,7 @@ class Msg(object):
 					await ask(u, "Nob, What have you sent, **I asked `.pem` file**, Send The correct one again...")
 					return
 				folder = bs_servers_path + sn + step
-				if not os.path.exists(folder): os.mkdir(folder)
+				if not os.path.exists(folder): os.mkdirs(folder)
 				file = folder +  k.filename
 				await k.save(file)
 				msg_cp[uid]['server_details']['key'] = file
