@@ -4,7 +4,8 @@ from bp import mycloud, msg
 from discord.ext import commands, tasks
 from itertools import cycle
 from datetime import datetime
-
+import urllib.request
+print(urllib.request.urlopen('http://icanhazip.com/').read().decode())
 prefix = get_json('bot')['default_prefix']
 
 def get_prefix(bot, message):
