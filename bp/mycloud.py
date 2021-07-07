@@ -46,7 +46,7 @@ class SFTP(object):
 
 			#If no Folder for the server is exists, create one!
 			local_folder = f'{mydir}bs_servers/{server}/data/'
-			if not os.path.exists(local_folder): os.mkdirs(local_folder)
+			if not os.path.exists(local_folder): os.makedirs(local_folder)
 			local_file = f'{local_folder}{file}.json'
 			#and for the file too
 			if not os.path.exists(local_file):

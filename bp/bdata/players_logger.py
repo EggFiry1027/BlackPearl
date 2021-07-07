@@ -8,7 +8,7 @@ class PlayersLogger(object):
 	"""An object which manages the players playing in the server"""
 	def __init__(self):
 		self.pData_path = os.path.join(_ba.env()['python_directory_user'],"playersData" + os.sep)
-		if not os.path.exists(self.pData_path): os.mkdirs(self.pData_path)
+		if not os.path.exists(self.pData_path): os.makedirs(self.pData_path)
 		self.players_file = self.pData_path + 'players.json'
 		self.old_players = {}
 		self.check_timer = ba.Timer(0.1, self.check, timetype=ba.TimeType.REAL, repeat=True)
