@@ -48,12 +48,13 @@ class BombSquadParty(commands.Cog):
 
 	@party_cmd.command(aliases=['create', 'new'])
 	@commands.bot_has_guild_permissions(manage_channels=True)
-	async def add(self, ctx, party_code: str = None, channel: discord.TextChannel = None, owner=None):
+	async def add(self, ctx, party_code: str = None, channel: discord.TextChannel = None, *, owner: list = []):
 		if (check_server_perms(ctx.author.id)) and ((hasattr(ctx, 'guild')) and (ctx.guild is not None)):
 			if (channel == None) or (not hasattr(channel, 'id')):
 				await ctx.reply(f'Invalid Channel, check the cmd by `{ctx.prefix}party`')
 				return
-			uid = ctx.author.id
+			u = ctx.author
+			uid = u.id
 			servers = get_json('bs_servers')
 			if party_code in servers:
 				await ctx.reply("A Party already exists with this **`party_code`**!")
@@ -61,17 +62,27 @@ class BombSquadParty(commands.Cog):
 			if len(servers) >= 5:
 				await ctx.reply("Max Party Limit Reached, sed!")
 				return
-			if owner != None:
-				if isinstance(owner, discord.Member): dc_owner = [get_clean_user_id(owner.id), uid]
+			dc_owner = []
+			if owner != []:
+				if isinstance(owner, list):
+					for onr in owner:
+						if isinstance(onr, discord.Member):
+							dc_owner += get_clean_user_id(onr.id)
+						elif isinstance(onr, str):
+							dc_owner += onr
+					dc_owner += uid
+				elif isinstance(owner, discord.Member): dc_owner = [get_clean_user_id(owner.id), uid]
 				elif isinstance(owner, str): dc_owner = [owner, uid]
-				else: dc_owner = [uid]
-			else: dc_owner = [uid]
+				else: dc_owner += uid
+			else: dc_owner += uid
 			try:
 				from bp.msg import Msg
+				from bp.livestats import server_embeds
 				status = {'server_name': party_code, 'server_details': {'dc_owners': dc_owner, 'dc_admins': [], 'chnl': channel.id}}
 				Msg().set_process(uid, 'pa_ip', status, self.bot)
 				await DMChannel.send(ctx.author, ip_qn)
 				await ctx.reply('Check your DM!')
+				server_embeds[party_code] = channel.send(embed=myembed(title=party_code, description=f"***{u.name}#{u.discriminator}*** has started a livestats adding process in this channel!\n Wait for him/her to complete setup!"))
 			except Exception as e:
 				if type(e) == discord.Forbidden:
 					await ctx.reply('Your DM is closed, try this cmd after opening it :O')

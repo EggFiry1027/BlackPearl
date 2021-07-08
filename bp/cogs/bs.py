@@ -77,8 +77,10 @@ class BombSquad(commands.Cog):
 			await ctx.reply(f"The `party_code` **`{pc}`** is wrong or doesn't exists!")
 			return
 		else:
-			#pn = LiveStats().get_ls(pc)['party_name']
-			pn = 'South IND Arena'
+			try:
+				pn = LiveStats().get_ls(pc)['party_name']
+			except:
+				pn = pc
 			stats = get_stats_file_from_local(pc)
 			players_data = {}
 			if 'players' in servers[pc]:
@@ -88,7 +90,7 @@ class BombSquad(commands.Cog):
 
 	#TOP
 	@commands.command()
-	async def top(self, ctx, p: str = None, discrim: str = 'score', limit: int = 15):
+	async def top(self, ctx, p: str = None, discrim: str = 'score', Type: str = 'highlow', limit: int = 15):
 		eea = 'e'
 		dc_names = {
 		'score': ['scores', 'Score'],
@@ -119,13 +121,15 @@ class BombSquad(commands.Cog):
 		if p not in servers:
 			await ctx.reply(f"The `party_code` **`{p}`** is wrong or doesn't exists!")
 			return
-		#pn = LiveStats().get_ls(p)['party_name']
-		pn = 'South IND Arena'
+		try:
+			pn = LiveStats().get_ls(p)['party_name']
+		except:
+			pn = p
 		stats = get_stats_file_from_local(p)
 		if 'players' in servers[p]:
 			players_data = get_players_file_from_local(p)
 		all_players = [(a[dc_names[discrim][0]], a['aid']) for a in stats.values()]
-		all_players.sort(reverse=True)
+		all_players.sort(reverse=True if Type.startswith('h') else False)
 		await send_top(pn, all_players, stats, discrim)
 		return
 
@@ -149,11 +153,10 @@ class BombSquad(commands.Cog):
 				try:
 					stdin, stdout, stderr = c.exec_command(f"tmux send-keys \"mgr.restart()\" ENTER")
 					c.close()
+					await ctx.reply('Server Restarted successfully!')
+					return
 				except Exception as e:
 					await ctx.reply(f"Error:```{str(e)}```")
-					print(e)
-				await ctx.reply('Server Restarted successfully!')
-				return
 			except Exception as e:
 				await ctx.reply(f"Error:```{str(e)}```")
 				return
@@ -192,11 +195,10 @@ class BombSquad(commands.Cog):
 				try:
 					stdin, stdout, stderr = c.exec_command(f"tmux send-keys \"mgr.kick({str(cid)}, {str(bt)})\" ENTER")
 					c.close()
+					await ctx.reply('Kicked That Player Successfully!')
+					return
 				except Exception as e:
-					await ctx.reply(f"Error:```{str(e)}```")
-					print(e)
-				await ctx.reply('Server Restarted successfully!')
-				return
+					await ctx.reply(f"Error:```{str(e)}```")\
 			except Exception as e:
 				await ctx.reply(f"Error:```{str(e)}```")
 				return
@@ -233,11 +235,10 @@ class BombSquad(commands.Cog):
 				try:
 					stdin, stdout, stderr = c.exec_command(f"tmux send-keys \"mgr.chatmessage('{str(msg)}')\" ENTER")
 					c.close()
+					await ctx.reply('Sent Message successfully!')
+					return
 				except Exception as e:
 					await ctx.reply(f"Error:```{str(e)}```")
-					print(e)
-				await ctx.reply('Sent Message successfully!')
-				return
 			except Exception as e:
 				await ctx.reply(f"Error:```{str(e)}```")
 				return
@@ -274,11 +275,10 @@ class BombSquad(commands.Cog):
 				try:
 					stdin, stdout, stderr = c.exec_command(f"tmux send-keys \"mgr.screenmessage('{str(msg)}')\" ENTER")
 					c.close()
+					await ctx.reply('Sent Message successfully!')
+					return
 				except Exception as e:
 					await ctx.reply(f"Error:```{str(e)}```")
-					print(e)
-				await ctx.reply('Sent Message successfully!')
-				return
 			except Exception as e:
 				await ctx.reply(f"Error:```{str(e)}```")
 				return

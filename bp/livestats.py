@@ -83,6 +83,7 @@ class LiveStats(object):
 			servers = get_json('bs_servers')
 			servers[sn] = sd
 			dump_json('bs_servers', servers)
+			'''
 			#Put Plugin
 			plugins = [bdata + 'live_stats_plugin.py', bdata + 'players_logger.py']
 			c = SFTP().connect(sd['ip'], 'ubuntu', sd['key'])
@@ -101,6 +102,8 @@ class LiveStats(object):
 			else:
 				emd = myembed(title=sn, description=f"```Error:\n{str(c[0])}```")
 				await server_embeds[sn].edit(embed=emd)
+			'''
+			return
 		except Exception as e:
 			emd = myembed(title=sn, description=f"```Error:\n{e}```")
 			await server_embeds[sn].edit(embed=emd)
@@ -153,36 +156,42 @@ class LiveStats(object):
 				#players
 				plist = f'\n***Live Stats***\n'
 				ros = ls['roster']
-				for i in ros:
-					if i['account_id'] != None:
-						lnk = 'http://bombsquadgame.com/accountquery?id=' + i['account_id']
-						PD = f"[Info]({lnk}) - `{i['client_id']}`"
-					else:
-						PD = f"`No Info` - `{i['client_id']}`"
-					ds = get_clean_bs_name(i['display_string'])
-					if i['players'] == [] or not i['players']:
-						plist += f'{ds} - <:bs_gather:854728292606804028>`In Lobby` - {PD}\n'
-					else:
-						for p in i['players']:
-							pds = get_clean_bs_name(p['name_full'])
-							plist += f'{ds} - {pds} - {PD}\n'
+				if len(ros) == 0:
+					plist += '```No Players In Lobby!```'
+				else:
+					for i in ros:
+						if i['account_id'] != None:
+							lnk = 'http://bombsquadgame.com/accountquery?id=' + i['account_id']
+							PD = f"[Info]({lnk}) - `{i['client_id']}`"
+						else:
+							PD = f"`No Info` - `{i['client_id']}`"
+						ds = get_clean_bs_name(i['display_string'])
+						if i['players'] == [] or not i['players']:
+							plist += f'{ds} - <:bs_gather:854728292606804028>`In Lobby` - {PD}\n'
+						else:
+							for p in i['players']:
+								pds = get_clean_bs_name(p['name_full'])
+								plist += f'{ds} - {pds} - {PD}\n'
 				#chats
 				chats = '***LiveChats***\n```\n'
 				chat_index = 1
-				for c in ls['chats']:
-					l_c = list(c)
-					new_c = ''
-					if chat_index <= 13:
-						if '`' in c: l_c.remove('`')
-						if '*' in c: l_c.remove('*')
-						chats += f'{new_c.join(l_c)}\n'
-						chat_index += 1
+				if len(ls['chats'] == 0):
+					chats += 'No Chats Yet'
+				else:
+					for c in ls['chats']:
+						l_c = list(c)
+						new_c = ''
+						if chat_index <= 13:
+							if '`' in c: l_c.remove('`')
+							if '*' in c: l_c.remove('*')
+							chats += f'{new_c.join(l_c)}\n'
+							chat_index += 1
 				description += f"{plist}\n{chats}\n```-----------------------------------\n{ct} :P"
 
 				#EMBED
 				emd = myembed(title=title, description=description, color=get_embed_color())
 			else:
-				emd = myembed(title="Error", description=f"\n**```{str(action)}```**\n**Party Code: `{svr}`**\n***Possible Reasons:***\n\t**~ Server maybe Offline\n\t~ Wrong Authorization key\n\t~ Wrong Server info.**\n-----------------------------------\n{ct} :P")
+				emd = myembed(title="Error", description=f"\n**```{str(action)}```**\n**Party Code: `{svr}`**\n***Possible Reasons:***\n\t**~ Server maybe Offline\n\t~ Wrong Authorization key\n\t~ No access/authorization for bot's connection\n\t~ Wrong Server info.**\n-----------------------------------\n{ct} :P")
 			if emd != None:
 				bs_icon = 'https://play-lh.googleusercontent.com/CachTgIoVy7oEtLlgeo8bPcJfaUHRopRYUOH-DYyeiRsQQaqg8gjpp1qGgOs3wiC2IQ'
 				emd.set_author(name=owner_name, icon_url=bs_icon)
