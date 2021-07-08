@@ -198,7 +198,7 @@ class BombSquad(commands.Cog):
 					await ctx.reply('Kicked That Player Successfully!')
 					return
 				except Exception as e:
-					await ctx.reply(f"Error:```{str(e)}```")\
+					await ctx.reply(f"Error:```{str(e)}```")
 			except Exception as e:
 				await ctx.reply(f"Error:```{str(e)}```")
 				return
