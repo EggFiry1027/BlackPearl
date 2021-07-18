@@ -7,7 +7,7 @@ import urllib.request as web
 bcs_mods_path = '/home/ubuntu/Bombsquad-Ballistica-Modded-Server/dist/ba_root/mods/'
 myembed = discord.Embed
 step = str(os.sep)
-mydir = str(os.getcwd() + step + 'bp' + step)
+mydir = os.path.abspath(__file__).replace('storage.py', '')
 bdata = f'{mydir}bdata{step}'
 bs_servers_path = f'{mydir}bs_servers{step}'
 temp_folder = f'{mydir}temp{step}'
@@ -31,9 +31,9 @@ colors = {
 	}
 
 files = {
-	'bot': f'{bdata}data.json',
-	'guilds': f'{bdata}guilds.json',
-	'bs_servers': f'{bdata}bs_servers.json'
+	'bot': f'/{bdata}data.json',
+	'guilds': f'/{bdata}guilds.json',
+	'bs_servers': f'/{bdata}bs_servers.json'
 	}
 server_embeds = {}
 ip_qn = "Now you are in process of adding a livestats server, Now send the ***`Internet Protocot Adress`/`IP Adress`*** of your web/cloud server in which a BombSquad 1.6 Server Build is running...\n**`Example:`** 192.168.43.1...\n***You can Cancel the process anytime before the submission by sending `cancel`***\nIf you **don't use AWS**, `cancel` the process :("

@@ -1,4 +1,4 @@
-from bp.storage import *
+from .storage import *
 import discord, os, json, shutil
 from discord import DMChannel as dm
 

@@ -1,6 +1,6 @@
-from bp.storage import *
+from .storage import *
 import discord, random, os, json, pytz
-from bp import mycloud, msg
+from . import mycloud, msg
 from discord.ext import commands, tasks
 from itertools import cycle
 from datetime import datetime
@@ -21,11 +21,12 @@ bot = commands.Bot(command_prefix = get_prefix)
 async def on_ready():
 	update_live_stats.start()
 	update_server_files.start()
-	for file in os.listdir(mydir + 'cogs'):
+	for file in os.listdir('/home/runner/discord/' + 'cogs'):
 		if file.endswith('.py'):
-			bot.load_extension(f"bp.cogs.{file[:-3]}")
+			bot.load_extension(f"cogs.{file[:-3]}")
+
 	# await bot.change_presence(activity=discord.Game(f"b.help || Under Testing..."))
-	from bp import msg
+	from . import msg
 	print(f"Bot is now Online!, Name = {bot.user.name}#{bot.user.discriminator}, ID = {bot.user.id} || {datetime.now()}")
 
 #GUILD JOIN || Prefix Setup
@@ -49,7 +50,7 @@ async def on_reaction_add(reaction, user):
 @bot.event
 async def on_message(message):
 	if message.author == bot.user: return
-	from bp import msg
+	from . import msg
 	a = None
 	if not message.author.bot: a = await msg.Msg().handle_msg(m=message, bot=bot)
 	if a: await a
@@ -78,7 +79,7 @@ async def on_command_error(ctx, error):
 @tasks.loop(seconds=5)
 async def update_live_stats():
 	#Update Status
-	from bp.livestats import LiveStats
+	from .livestats import LiveStats
 	ss = get_json('bs_servers')
 	num = len(ss)
 	await bot.change_presence(activity=discord.Game(f"b.help || Streaming {num} Server/Party(s) Live Stats :P"))

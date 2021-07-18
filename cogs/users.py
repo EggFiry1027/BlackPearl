@@ -1,4 +1,4 @@
-from bp.storage import *
+from BlackPearl.bp.storage import *
 import discord, random, os, json, shutil
 from discord import DMChannel
 from discord.ext import commands

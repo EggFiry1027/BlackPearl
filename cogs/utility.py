@@ -1,6 +1,6 @@
-from bp.storage import *
+from BlackPearl.bp.storage import *
 import discord, random, os, json, pytz
-from bp import mycloud
+from BlackPearl.bp import mycloud
 from discord.ext import commands
 from itertools import cycle
 from datetime import datetime

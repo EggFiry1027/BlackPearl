@@ -1,5 +1,5 @@
 import discord, os, json, paramiko
-from bp.storage import *
+from .storage import *
 from datetime import datetime
 
 class SFTP(object):
