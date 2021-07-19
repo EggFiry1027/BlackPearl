@@ -129,43 +129,6 @@ class BombSquad(commands.Cog):
 		await send_top(pn, all_players, stats, discrim)
 		return
 
-	#end
-	@commands.command(aliases=['endgame'])
-	async def end(self, ctx, party_code: str = None):
-		if party_code == None:
-			await ctx.reply(f"***Usage***\n**```{ctx.prefix}endgame <party_code>```**")
-			return
-		servers = get_json('bs_servers')
-		if party_code not in servers:
-			await ctx.reply(f"The `party_code` **`{party_code}`** is wrong or doesn't exists!")
-			return
-		req = ctx.author.id
-		owners = servers[party_code]['dc_owners']
-		admins = servers[party_code]['dc_admins']
-		if (req in owners) or (req in admins):
-			try:
-				sd = servers[party_code]
-				c = SFTP().connect(sd['ip'], 'ubuntu', sd['key'])
-				try:
-					stdin, stdout, stderr = c.exec_command(f"tmux send-keys \"mgr.chatmessage('exe_cmd_dc end')\" ENTER")
-					c.close()
-				except Exception as e:
-					await ctx.reply(f"Error:```{str(e)}```")
-					print(e)
-				await ctx.reply('Ended Game successfully!')
-				return
-			except Exception as e:
-				await ctx.reply(f"Error:```{str(e)}```")
-				return
-		else:
-			peeps = ""
-			for p in owners:
-				if isinstance(p, int):
-					peeps += await get_dc_user_name(self.bot, p) + '\n'
-				else: peeps += p + '\n'
-			await ctx.reply(f"You have to be one of these guys:\n***```\n{str(peeps)}```***\nor else **Kill all of them to Take Control of the Server** :V")
-			return
-
 	#RESTART
 	@commands.command(aliases=['quit'])
 	async def restart(self, ctx, party_code: str = None):
@@ -233,53 +196,6 @@ class BombSquad(commands.Cog):
 					await ctx.reply(f"Error:```{str(e)}```")
 					print(e)
 				await ctx.reply('Server Restarted successfully!')
-				return
-			except Exception as e:
-				await ctx.reply(f"Error:```{str(e)}```")
-				return
-		else:
-			peeps = ""
-			for p in owners:
-				if isinstance(p, int):
-					peeps += await get_dc_user_name(self.bot, p) + '\n'
-				else: peeps += p + '\n'
-			for p in admins:
-				if isinstance(p, int):
-					peeps += await get_dc_user_name(self.bot, p) + '\n'
-				else: peeps += p + '\n'
-			await ctx.reply(f"You have to be one of these guys:\n***```\n{str(peeps)}```***\nor else **Kill all of them to Take Control of the Server** :V")
-			return
-
-
-
-	#Private/Public
-	@commands.command(aliases=['makeparty', 'mp'])
-	async def make_party(self, ctx, party_code: str = None, *, msg: str = None):
-		if msg == None:
-			await ctx.reply(f"***Usage***\n**```{ctx.prefix}makeparty <party_code> <public/private>```**")
-			return
-		servers = get_json('bs_servers')
-		if party_code not in servers:
-			await ctx.reply(f"The `party_code` **`{party_code}`** is wrong or doesn't exists!")
-			return
-		req = ctx.author.id
-		owners = servers[party_code]['dc_owners']
-		admins = servers[party_code]['dc_admins']
-		if (req in owners) or (req in admins) and (msg != None):
-			try:
-				sd = servers[party_code]
-				c = SFTP().connect(sd['ip'], 'ubuntu', sd['key'])
-				pub = True if msg == "public" else False
-				try:
-					if pub:
-						stdin, stdout, stderr = c.exec_command(f"tmux send-keys \"mgr.chatmessage('exe_cmd_dc make public')\" ENTER")
-					else:
-						stdin, stdout, stderr = c.exec_command(f"tmux send-keys \"mgr.chatmessage('exe_cmd_dc make private')\" ENTER")
-					c.close()
-				except Exception as e:
-					await ctx.reply(f"Error:```{str(e)}```")
-					print(e)
-				await ctx.reply(f"Party is now {msg}")
 				return
 			except Exception as e:
 				await ctx.reply(f"Error:```{str(e)}```")
