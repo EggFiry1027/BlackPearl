@@ -147,9 +147,13 @@ class LiveStats(object):
 				livep = ls['livep']
 				maxp = ls['maxp']
 				title = f'*`{pn}`*'
-
-				#description
-				description = f'\n\t\n**Players in Party:** (**`{str(livep)}`/`{str(maxp)}`**)\n**Party Code: `{svr}`**\n'
+				if 'cpu' in ls and 'ram' in ls:
+					cpu = ls['cpu']
+					ram = ls['ram']
+					description = f'\n\t\n**Players in Party:** (**`{str(livep)}`/`{str(maxp)}`**)\n**Party Code: `{svr}`**\n**CPU Usage: `{cpu}%`**\n**RAM Usage: `{ram}%`**\n'
+				else:
+					description = f'\n\t\n**Players in Party:** (**`{str(livep)}`/`{str(maxp)}`**)\n**Party Code: `{svr}`**\n'
+				
 				#players
 				plist = f'\n***Live Stats***\n'
 				ros = ls['roster']
