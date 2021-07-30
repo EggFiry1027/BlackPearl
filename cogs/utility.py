@@ -4,6 +4,7 @@ from BlackPearl.bp import mycloud
 from discord.ext import commands
 from itertools import cycle
 from datetime import datetime
+import psutil as p
 
 class Utility(commands.Cog):
 	"""docstring for Utility"""
@@ -18,6 +19,13 @@ class Utility(commands.Cog):
 	async def ping(self, ctx):
 		l = str(float(ctx.bot.latency*1000))
 		lm = f"**Pong!, `{l.split('.')[0]}.{l.split('.')[1][:2]}ms`**"
+		await ctx.send(lm)
+
+	@commands.command()
+	async def usage(self, ctx):
+		cpu = p.cpu_percent(0.1)
+		ram = p.virtual_memory().percent
+		lm = f"**`CPU : {cpu}% and RAM : {ram}%`**"
 		await ctx.send(lm)
 
 	@commands.command()
