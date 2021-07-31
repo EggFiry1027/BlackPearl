@@ -9,10 +9,11 @@
             532846527807488011,
             717028865859387412,
             689333717407367297,
-            829714252910297178
+            829714252910297178,
+            489133777226825728
         ],
         "chnl": 861635167730925578,
-        "ip": "13.235.103.234",
+        "ip": "13.233.107.127",
         "mods": "/home/ubuntu/sia/dist/ba_root/mods/",
         "ls": "/home/ubuntu/sia/dist/ba_root/mods/stats/ls.json",
         "stats": "/home/ubuntu/sia/dist/ba_root/mods/stats/stats.json",
